@@ -29,6 +29,13 @@ public sealed class Category : UserOwnedEntity
         Color = color;
     }
 
+    public void Update(string name, string? icon, string? color)
+    {
+        Rename(name);
+        Icon = icon;
+        Color = color;
+    }
+
     public void Rename(string name)
     {
         if (string.IsNullOrWhiteSpace(name)) throw new DomainException("La categoría necesita un nombre.");
