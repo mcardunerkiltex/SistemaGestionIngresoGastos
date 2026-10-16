@@ -1,0 +1,63 @@
+<app-month-nav />
+
+@if (data.value(); as d) {
+  <section class="summary" aria-label="Resumen del presupuesto">
+    <div class="figures">
+      <div><span class="label">Presupuesto</span><span>{{ d.totalBudgeted | currency }}</span></div>
+      <div><span class="label">Gastado</span><span>{{ d.totalSpent | currency }}</span></div>
+      <div>
+        <span class="label">{{ available() < 0 ? 'Pasado' : 'Disponible' }}</span>
+        <span [class.over]="available() < 0">{{ (available() < 0 ? -available() : available()) | currency }}</span>
+      </div>
+    </div>
+    @if (d.totalBudgeted > 0) {
+      <div class="bar" [attr.data-state]="budgetState(d.totalSpent, d.totalBudgeted)">
+        <span [style.width.%]="usedPercent(d.totalSpent, d.totalBudgeted)"></span>
+      </div>
+    }
+  </section>
+
+  @if (d.totalBudgeted === 0) {
+    <div class="empty">
+      <mat-icon>savings</mat-icon>
+      <p>Todavía no armaste el presupuesto de este mes. Tocá una categoría para ponerle un monto.</p>
+      <button mat-stroked-button (click)="copyPrevious()" [disabled]="busy()">Copiar el del mes anterior</button>
+    </div>
+  }
+
+  @if (planned().length) {
+    <h2>Con presupuesto</h2>
+    @for (l of planned(); track l.categoryId) {
+      <button type="button" class="line" (click)="edit(l)">
+        <span class="icon" [style.background]="l.color"><mat-icon>{{ l.icon }}</mat-icon></span>
+        <span class="body">
+          <span class="row"><span class="name">{{ l.name }}</span><span class="numbers">{{ l.spent | currency: 'ARS' : 'symbol' : '1.0-0' }} de {{ l.budgeted | currency: 'ARS' : 'symbol' : '1.0-0' }}</span></span>
+          <span class="bar" [attr.data-state]="budgetState(l.spent, l.budgeted)"><span [style.width.%]="usedPercent(l.spent, l.budgeted)"></span></span>
+          <span class="hint" [class.over]="l.spent > l.budgeted">
+            {{ l.spent > l.budgeted ? 'Te pasaste ' + ((l.spent - l.budgeted) | currency: 'ARS' : 'symbol' : '1.0-0') : 'Quedan ' + ((l.budgeted - l.spent) | currency: 'ARS' : 'symbol' : '1.0-0') }}
+          </span>
+        </span>
+      </button>
+    }
+  }
+
+  @if (unplanned().length) {
+    <h2>Sin presupuesto</h2>
+    @for (l of unplanned(); track l.categoryId) {
+      <button type="button" class="line" (click)="edit(l)">
+        <span class="icon" [style.background]="l.color"><mat-icon>{{ l.icon }}</mat-icon></span>
+        <span class="body">
+          <span class="row">
+            <span class="name">{{ l.name }}</span>
+            <span class="numbers">{{ l.spent ? (l.spent | currency: 'ARS' : 'symbol' : '1.0-0') + ' gastado' : '' }}</span>
+          </span>
+        </span>
+        <mat-icon class="add">add</mat-icon>
+      </button>
+    }
+  }
+} @else if (data.error()) {
+  <p class="empty">No se pudo cargar el presupuesto.</p>
+} @else {
+  <p class="empty">Cargando…</p>
+}

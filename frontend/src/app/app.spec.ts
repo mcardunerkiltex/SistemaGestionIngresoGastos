@@ -42,13 +42,20 @@ describe('App', () => {
     expect(harness.routeNativeElement?.textContent).toContain('Ingresá para ver tus gastos');
   });
 
-  it('shows Inicio and the navigation once signed in', async () => {
+  it('shows the month summary and the navigation once signed in', async () => {
     await signIn();
     const harness = await RouterTestingHarness.create('/');
-    http.match('/api/v1/info').forEach((r) => r.flush({ name: 'Gastos API', version: '1.0.0', environment: 'Test' }));
+    http.match((r) => r.url === '/api/v1/dashboard').forEach((r) =>
+      r.flush({ month: '2026-10-01', income: 500000, expense: 120000, budgeted: 0, totalBalance: 380000, byCategory: [], lastMonths: [] }),
+    );
+    http.match((r) => r.url === '/api/v1/transactions').forEach((r) =>
+      r.flush({ items: [], total: 0, page: 1, pageSize: 5, totalIncome: 0, totalExpense: 0 }),
+    );
+    await harness.fixture.whenStable();
 
     const page = harness.fixture.nativeElement as HTMLElement;
-    expect(harness.routeNativeElement?.querySelector('h1')?.textContent).toContain('Inicio');
+    expect(harness.routeNativeElement?.textContent).toContain('En qué gastaste');
+    expect(harness.routeNativeElement?.textContent).toContain('Te queda');
     expect(page.textContent).toContain('Movimientos');
   });
 

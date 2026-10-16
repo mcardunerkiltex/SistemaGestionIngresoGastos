@@ -107,9 +107,9 @@ dotnet ef migrations add <Nombre> -p src/Gastos.Infrastructure -s src/Gastos.Api
 
 - [x] Paso 1: alcance del MVP, arquitectura y modelo de datos.
 - [x] Paso 2: esqueleto del proyecto.
-- [ ] Paso 3: MVP
+- [x] Paso 3: MVP
   - [x] Login con email y Google, sesión con refresh token
   - [x] Cuentas (con saldo) y categorías
   - [x] Movimientos (gastos, ingresos y transferencias), carga rápida y listado con filtros
-  - [ ] Presupuesto y dashboard
+  - [x] Presupuesto mensual por categoría y dashboard del mes
 - [ ] Paso 4: publicación.

@@ -1,8 +1,4 @@
-<header class="month">
-  <button mat-icon-button (click)="moveMonth(-1)" aria-label="Mes anterior"><mat-icon>chevron_left</mat-icon></button>
-  <h1>{{ month() | date: 'MMMM y' }}</h1>
-  <button mat-icon-button (click)="moveMonth(1)" aria-label="Mes siguiente"><mat-icon>chevron_right</mat-icon></button>
-</header>
+<app-month-nav />
 
 <section class="totals" aria-label="Totales del mes">
   <div><span class="label">Ingresos</span><span class="income">{{ result.value()?.totalIncome ?? 0 | currency }}</span></div>
