@@ -1,0 +1,45 @@
+@if (isHandset()) {
+  <mat-toolbar class="top-bar">Mis Gastos</mat-toolbar>
+  <main class="content content--handset">
+    <router-outlet />
+  </main>
+  <nav class="bottom-nav" aria-label="Navegación principal">
+    @for (item of nav.slice(0, 2); track item.path) {
+      <a [routerLink]="item.path" routerLinkActive="active" class="bottom-nav__item">
+        <mat-icon>{{ item.icon }}</mat-icon>
+        <span>{{ item.label }}</span>
+      </a>
+    }
+    <a mat-fab class="bottom-nav__add" routerLink="/movimientos/nuevo" aria-label="Cargar movimiento">
+      <mat-icon>add</mat-icon>
+    </a>
+    @for (item of nav.slice(2); track item.path) {
+      <a [routerLink]="item.path" routerLinkActive="active" class="bottom-nav__item">
+        <mat-icon>{{ item.icon }}</mat-icon>
+        <span>{{ item.label }}</span>
+      </a>
+    }
+  </nav>
+} @else {
+  <mat-sidenav-container class="desktop">
+    <mat-sidenav mode="side" opened class="sidenav">
+      <div class="brand">Mis Gastos</div>
+      <a mat-flat-button routerLink="/movimientos/nuevo" class="sidenav__add">
+        <mat-icon>add</mat-icon> Cargar movimiento
+      </a>
+      <mat-nav-list>
+        @for (item of nav; track item.path) {
+          <a mat-list-item [routerLink]="item.path" routerLinkActive #rla="routerLinkActive" [activated]="rla.isActive">
+            <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+            <span matListItemTitle>{{ item.label === 'Más' ? 'Configuración' : item.label }}</span>
+          </a>
+        }
+      </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <main class="content">
+        <router-outlet />
+      </main>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+}

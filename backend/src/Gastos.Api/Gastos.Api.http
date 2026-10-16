@@ -1,0 +1,6 @@
+@api = http://localhost:5080
+
+GET {{api}}/api/v1/info
+
+###
+GET {{api}}/health

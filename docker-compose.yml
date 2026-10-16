@@ -1,0 +1,38 @@
+# Levanta todo con: docker compose up --build
+# Web: http://localhost:8080 · API: http://localhost:5080/docs · Postgres: localhost:5432
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: gastos
+      POSTGRES_USER: gastos
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gastos}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gastos -d gastos"]
+      interval: 5s
+      retries: 10
+
+  api:
+    build: ./backend
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Default: Host=db;Port=5432;Database=gastos;Username=gastos;Password=${POSTGRES_PASSWORD:-gastos}
+    ports:
+      - "5080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
