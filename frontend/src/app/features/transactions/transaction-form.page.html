@@ -1,0 +1,86 @@
+<header class="page-header">
+  <a mat-icon-button routerLink="/movimientos" aria-label="Volver"><mat-icon>close</mat-icon></a>
+  <h1>{{ isEdit() ? 'Editar movimiento' : 'Cargar movimiento' }}</h1>
+  @if (isEdit()) {
+    <button mat-icon-button (click)="remove()" aria-label="Borrar movimiento"><mat-icon>delete</mat-icon></button>
+  }
+</header>
+
+<mat-button-toggle-group class="kind" [value]="kind()" (change)="setKind($event.value)" [disabled]="isEdit()" aria-label="Tipo de movimiento">
+  <mat-button-toggle value="Expense">Gasto</mat-button-toggle>
+  <mat-button-toggle value="Income">Ingreso</mat-button-toggle>
+  <mat-button-toggle value="Transfer">Transferencia</mat-button-toggle>
+</mat-button-toggle-group>
+
+<form (ngSubmit)="save()" class="form">
+  <mat-form-field class="amount" [class.income]="kind() === 'Income'" [class.expense]="kind() === 'Expense'">
+    <mat-label>Monto</mat-label>
+    <span matTextPrefix>$&nbsp;</span>
+    <input matInput name="amount" type="number" inputmode="decimal" step="0.01" min="0" autocomplete="off"
+           [ngModel]="amount()" (ngModelChange)="amount.set($event)" cdkFocusInitial autofocus />
+  </mat-form-field>
+
+  @if (kind() !== 'Transfer') {
+    <section class="categories" aria-label="Categoría">
+      @for (c of categories.value(); track c.id) {
+        <button type="button" class="category" [class.selected]="parentId() === c.id" (click)="pickParent(c)">
+          <span class="icon" [style.background]="c.color"><mat-icon>{{ c.icon }}</mat-icon></span>
+          <span class="name">{{ c.name }}</span>
+        </button>
+      }
+    </section>
+
+    @if (selectedParent(); as parent) {
+      @if (parent.children.length) {
+        <mat-chip-listbox class="subcategories" aria-label="Subcategoría">
+          @for (s of parent.children; track s.id) {
+            <mat-chip-option [selected]="categoryId() === s.id" (click)="pickChild(s)">{{ s.name }}</mat-chip-option>
+          }
+        </mat-chip-listbox>
+      }
+      <p class="picked">{{ selectedCategoryLabel() }}</p>
+    }
+  }
+
+  <div class="row">
+    <mat-form-field>
+      <mat-label>{{ kind() === 'Transfer' ? 'Desde' : 'Cuenta' }}</mat-label>
+      <mat-select name="account" [value]="accountId()" (valueChange)="accountId.set($event)">
+        @for (a of accounts.value(); track a.id) {
+          <mat-option [value]="a.id">{{ a.name }} · $ {{ a.balance | number: '1.0-0' }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    @if (kind() === 'Transfer') {
+      <mat-form-field>
+        <mat-label>Hacia</mat-label>
+        <mat-select name="toAccount" [value]="toAccountId()" (valueChange)="toAccountId.set($event)">
+          @for (a of accounts.value(); track a.id) {
+            @if (a.id !== accountId()) {
+              <mat-option [value]="a.id">{{ a.name }}</mat-option>
+            }
+          }
+        </mat-select>
+      </mat-form-field>
+    }
+
+    <mat-form-field>
+      <mat-label>Fecha</mat-label>
+      <input matInput name="date" [matDatepicker]="picker" [ngModel]="date()" (ngModelChange)="$event && date.set($event)" />
+      <mat-datepicker-toggle matIconSuffix [for]="picker" />
+      <mat-datepicker #picker touchUi />
+    </mat-form-field>
+  </div>
+
+  <mat-form-field>
+    <mat-label>Nota (opcional)</mat-label>
+    <input matInput name="note" maxlength="500" [ngModel]="note()" (ngModelChange)="note.set($event)" />
+  </mat-form-field>
+
+  @if (error()) {
+    <p class="error" role="alert">{{ error() }}</p>
+  }
+
+  <button mat-flat-button type="submit" class="save" [disabled]="busy()">Guardar</button>
+</form>

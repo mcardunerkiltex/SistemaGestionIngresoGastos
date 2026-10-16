@@ -1,0 +1,103 @@
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  h1 {
+    flex: 1;
+    margin: 0;
+    font: var(--mat-sys-title-large);
+  }
+}
+
+.kind {
+  width: 100%;
+  margin: 16px 0;
+
+  mat-button-toggle {
+    flex: 1;
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  max-width: 640px;
+}
+
+.amount input {
+  font: var(--mat-sys-display-small);
+}
+
+.amount.expense input {
+  color: var(--mat-sys-error);
+}
+
+.amount.income input {
+  color: var(--mat-sys-primary);
+}
+
+.categories {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.category {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  font: var(--mat-sys-label-medium);
+
+  &.selected {
+    border-color: var(--mat-sys-primary);
+    background: var(--mat-sys-primary-container);
+  }
+
+  .name {
+    text-align: center;
+    line-height: 1.2;
+  }
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: #fff;
+}
+
+.subcategories {
+  margin-bottom: 4px;
+}
+
+.picked {
+  margin: 0 0 16px;
+  color: var(--mat-sys-on-surface-variant);
+  font: var(--mat-sys-label-large);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  column-gap: 12px;
+}
+
+.error {
+  color: var(--mat-sys-error);
+}
+
+.save {
+  height: 52px;
+  margin-top: 8px;
+}

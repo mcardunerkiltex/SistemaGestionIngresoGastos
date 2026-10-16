@@ -1,0 +1,75 @@
+<header class="month">
+  <button mat-icon-button (click)="moveMonth(-1)" aria-label="Mes anterior"><mat-icon>chevron_left</mat-icon></button>
+  <h1>{{ month() | date: 'MMMM y' }}</h1>
+  <button mat-icon-button (click)="moveMonth(1)" aria-label="Mes siguiente"><mat-icon>chevron_right</mat-icon></button>
+</header>
+
+<section class="totals" aria-label="Totales del mes">
+  <div><span class="label">Ingresos</span><span class="income">{{ result.value()?.totalIncome ?? 0 | currency }}</span></div>
+  <div><span class="label">Gastos</span><span class="expense">{{ result.value()?.totalExpense ?? 0 | currency }}</span></div>
+  <div><span class="label">Balance</span><span [class.expense]="balance() < 0">{{ balance() | currency }}</span></div>
+</section>
+
+<section class="filters">
+  <mat-form-field subscriptSizing="dynamic">
+    <mat-label>Cuenta</mat-label>
+    <mat-select [value]="accountId()" (valueChange)="accountId.set($event)">
+      <mat-option value="">Todas</mat-option>
+      @for (a of accounts.value(); track a.id) {
+        <mat-option [value]="a.id">{{ a.name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field subscriptSizing="dynamic">
+    <mat-label>Categoría</mat-label>
+    <mat-select [value]="categoryId()" (valueChange)="categoryId.set($event)">
+      <mat-option value="">Todas</mat-option>
+      @for (c of categories.value(); track c.id) {
+        <mat-option [value]="c.id">{{ c.name }}</mat-option>
+        @for (s of c.children; track s.id) {
+          <mat-option [value]="s.id" class="sub-option">{{ s.name }}</mat-option>
+        }
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field subscriptSizing="dynamic">
+    <mat-label>Buscar en notas</mat-label>
+    <input matInput [value]="search()" (change)="search.set($any($event.target).value)" />
+  </mat-form-field>
+</section>
+
+@for (g of groups(); track g.date) {
+  <h2 class="day">{{ toDate(g.date) | date: 'EEEE d' }}</h2>
+  @for (t of g.items; track t.id) {
+    <a class="movement" [routerLink]="['/movimientos', t.id]">
+      @if (t.kind === 'Transfer') {
+        <span class="icon transfer"><mat-icon>swap_horiz</mat-icon></span>
+      } @else {
+        <span class="icon" [style.background]="t.category?.color"><mat-icon>{{ t.category?.icon ?? 'help' }}</mat-icon></span>
+      }
+      <span class="text">
+        <span class="title">{{ title(t) }}</span>
+        <span class="subtitle">{{ subtitle(t) }}</span>
+      </span>
+      <span class="amount" [class.expense]="signedAmount(t) < 0" [class.income]="t.kind === 'Income'">
+        {{ (t.kind === 'Transfer' && !signedAmount(t) ? t.amount : signedAmount(t)) | currency }}
+      </span>
+    </a>
+  }
+} @empty {
+  @if (result.isLoading()) {
+    <p class="empty">Cargando…</p>
+  } @else if (result.error()) {
+    <p class="empty error">No se pudieron cargar los movimientos.</p>
+  } @else {
+    <div class="empty">
+      <mat-icon>receipt_long</mat-icon>
+      <p>No hay movimientos en este mes.</p>
+      <a mat-flat-button routerLink="/movimientos/nuevo">Cargar el primero</a>
+    </div>
+  }
+}
+
+@if (hasMore()) {
+  <button mat-button class="more" (click)="pages.set(pages() + 1)" [disabled]="result.isLoading()">Ver más</button>
+}
