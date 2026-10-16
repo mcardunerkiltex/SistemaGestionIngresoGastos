@@ -34,6 +34,32 @@ public sealed class Transaction : UserOwnedEntity
             Create(userId, toAccountId, null, TransactionType.TransferIn, amount, date, note, transferId));
     }
 
+    public bool IsTransfer => TransferId is not null;
+
+    /// <summary>Cambia un gasto o ingreso. Las transferencias se editan con <see cref="UpdateTransferLeg"/>.</summary>
+    public void Update(Guid accountId, Guid categoryId, decimal amount, DateOnly date, string? note)
+    {
+        if (IsTransfer) throw new DomainException("Una transferencia se edita como transferencia.");
+        AccountId = accountId;
+        CategoryId = categoryId;
+        SetDetails(amount, date, note);
+    }
+
+    public void UpdateTransferLeg(Guid accountId, decimal amount, DateOnly date, string? note)
+    {
+        if (!IsTransfer) throw new DomainException("El movimiento no es una transferencia.");
+        AccountId = accountId;
+        SetDetails(amount, date, note);
+    }
+
+    private void SetDetails(decimal amount, DateOnly date, string? note)
+    {
+        if (amount <= 0) throw new DomainException("El monto debe ser mayor a cero.");
+        Amount = decimal.Round(amount, 2);
+        Date = date;
+        Note = string.IsNullOrWhiteSpace(note) ? null : note.Trim();
+    }
+
     /// <summary>Efecto sobre el saldo de la cuenta: negativo para gastos y transferencias salientes.</summary>
     public decimal SignedAmount => Type is TransactionType.Expense or TransactionType.TransferOut ? -Amount : Amount;
 

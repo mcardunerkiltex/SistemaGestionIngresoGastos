@@ -2,6 +2,7 @@ using FluentValidation;
 using Gastos.Application.Accounts;
 using Gastos.Application.Auth;
 using Gastos.Application.Categories;
+using Gastos.Application.Transactions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Gastos.Application;
@@ -15,6 +16,7 @@ public static class DependencyInjection
         services.AddScoped<AuthService>();
         services.AddScoped<AccountsService>();
         services.AddScoped<CategoriesService>();
+        services.AddScoped<TransactionsService>();
         return services;
     }
 }
