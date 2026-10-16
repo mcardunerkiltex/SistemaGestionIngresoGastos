@@ -1,4 +1,5 @@
 using Gastos.Application.Abstractions;
+using Gastos.Infrastructure.Auth;
 using Gastos.Infrastructure.Persistence;
 using Gastos.Infrastructure.Persistence.Interceptors;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,12 @@ public static class DependencyInjection
             .UseSnakeCaseNamingConvention()
             .AddInterceptors(sp.GetRequiredService<AuditingInterceptor>()));
         services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<AppDbContext>());
+
+        services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.Section));
+        services.Configure<GoogleAuthOptions>(configuration.GetSection(GoogleAuthOptions.Section));
+        services.AddSingleton<IPasswordHasher, PasswordHasher>();
+        services.AddSingleton<ITokenService, TokenService>();
+        services.AddSingleton<IGoogleTokenValidator, GoogleTokenValidator>();
 
         return services;
     }

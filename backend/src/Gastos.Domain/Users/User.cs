@@ -23,6 +23,8 @@ public sealed class User : Entity
     public static User CreateWithGoogle(string email, string displayName, string googleSubject) =>
         new() { Email = Normalize(email), DisplayName = displayName.Trim(), GoogleSubject = googleSubject };
 
+    public void SetPasswordHash(string passwordHash) => PasswordHash = passwordHash;
+
     public void LinkGoogle(string googleSubject) => GoogleSubject = googleSubject;
 
     private static string Normalize(string email) => email.Trim().ToLowerInvariant();
