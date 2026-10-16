@@ -2,16 +2,31 @@ import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
   selector: 'app-settings',
-  imports: [MatCardModule, MatButtonModule, MatIconModule],
+  imports: [RouterLink, MatCardModule, MatButtonModule, MatIconModule, MatListModule],
   template: `
     <h1>Configuración</h1>
 
+    <mat-nav-list>
+      <a mat-list-item routerLink="cuentas">
+        <mat-icon matListItemIcon>account_balance_wallet</mat-icon>
+        <span matListItemTitle>Cuentas</span>
+        <span matListItemLine>Efectivo, bancos, tarjetas y billeteras</span>
+      </a>
+      <a mat-list-item routerLink="categorias">
+        <mat-icon matListItemIcon>category</mat-icon>
+        <span matListItemTitle>Categorías</span>
+        <span matListItemLine>De gastos e ingresos</span>
+      </a>
+    </mat-nav-list>
+
     @if (auth.user(); as user) {
-      <mat-card appearance="outlined">
+      <mat-card appearance="outlined" class="profile">
         <mat-card-header>
           <mat-card-title>{{ user.displayName }}</mat-card-title>
           <mat-card-subtitle>{{ user.email }}</mat-card-subtitle>
@@ -27,10 +42,8 @@ import { AuthService } from '../../core/auth/auth.service';
         </mat-card-actions>
       </mat-card>
     }
-
-    <p class="next">Cuentas y categorías se editan acá; se construyen en el siguiente bloque del paso 3.</p>
   `,
-  styles: '.next { color: var(--mat-sys-on-surface-variant); margin-top: 24px; }',
+  styles: '.profile { margin-top: 24px; }',
 })
 export class SettingsPage {
   protected readonly auth = inject(AuthService);

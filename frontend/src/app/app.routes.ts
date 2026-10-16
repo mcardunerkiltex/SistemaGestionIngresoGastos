@@ -16,6 +16,8 @@ export const routes: Routes = [
       { path: 'movimientos/nuevo', title: 'Cargar · Mis Gastos', loadComponent: () => import('./features/transactions/new-transaction.page').then((m) => m.NewTransactionPage) },
       { path: 'presupuesto', title: 'Presupuesto · Mis Gastos', loadComponent: () => import('./features/budget/budget.page').then((m) => m.BudgetPage) },
       { path: 'configuracion', title: 'Configuración · Mis Gastos', loadComponent: () => import('./features/settings/settings.page').then((m) => m.SettingsPage) },
+      { path: 'configuracion/cuentas', title: 'Cuentas · Mis Gastos', loadComponent: () => import('./features/settings/accounts.page').then((m) => m.AccountsPage) },
+      { path: 'configuracion/categorias', title: 'Categorías · Mis Gastos', loadComponent: () => import('./features/settings/categories.page').then((m) => m.CategoriesPage) },
     ],
   },
   { path: '**', redirectTo: '' },

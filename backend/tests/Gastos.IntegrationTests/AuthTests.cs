@@ -1,7 +1,6 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using Gastos.Application.Abstractions;
 using Gastos.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -151,17 +150,10 @@ public sealed class AuthTests(ApiFactory factory) : IClassFixture<ApiFactory>
         var alice = await RegisterAsync(client, NewEmail());
         var bob = await RegisterAsync(factory.CreateBrowser(), NewEmail());
 
-        using var scope = factory.Services.CreateScope();
-        var options = scope.ServiceProvider.GetRequiredService<Microsoft.EntityFrameworkCore.DbContextOptions<AppDbContext>>();
-        await using var asAlice = new AppDbContext(options, new FixedUser(alice.User.Id));
+        await using var asAlice = factory.DbAs(alice.User.Id);
 
         var owners = await asAlice.Categories.Select(c => c.UserId).Distinct().ToListAsync();
         Assert.Equal([alice.User.Id], owners);
         Assert.DoesNotContain(bob.User.Id, owners);
-    }
-
-    private sealed class FixedUser(Guid id) : ICurrentUser
-    {
-        public Guid? Id => id;
     }
 }

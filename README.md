@@ -109,7 +109,7 @@ dotnet ef migrations add <Nombre> -p src/Gastos.Infrastructure -s src/Gastos.Api
 - [x] Paso 2: esqueleto del proyecto.
 - [ ] Paso 3: MVP
   - [x] Login con email y Google, sesión con refresh token
-  - [ ] Cuentas y categorías
+  - [x] Cuentas (con saldo) y categorías
   - [ ] Movimientos y carga rápida
   - [ ] Presupuesto y dashboard
 - [ ] Paso 4: publicación.

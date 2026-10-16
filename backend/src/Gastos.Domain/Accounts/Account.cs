@@ -28,5 +28,12 @@ public sealed class Account : UserOwnedEntity
         Name = name.Trim();
     }
 
-    public void Archive() => IsArchived = true;
+    public void Update(string name, AccountType type, decimal initialBalance)
+    {
+        Rename(name);
+        Type = type;
+        InitialBalance = decimal.Round(initialBalance, 2);
+    }
+
+    public void SetArchived(bool archived) => IsArchived = archived;
 }
