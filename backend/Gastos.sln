@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gastos.UnitTests", "tests\Gastos.UnitTests\Gastos.UnitTests.csproj", "{EE3FA758-A871-4637-B507-36371AF9E596}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gastos.IntegrationTests", "tests\Gastos.IntegrationTests\Gastos.IntegrationTests.csproj", "{ACEAAC11-EA16-470A-A176-AAA54276B1A6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,18 @@ Global
 		{EE3FA758-A871-4637-B507-36371AF9E596}.Release|x64.Build.0 = Release|Any CPU
 		{EE3FA758-A871-4637-B507-36371AF9E596}.Release|x86.ActiveCfg = Release|Any CPU
 		{EE3FA758-A871-4637-B507-36371AF9E596}.Release|x86.Build.0 = Release|Any CPU
+		{ACEAAC11-EA16-470A-A176-AAA54276B1A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACEAAC11-EA16-470A-A176-AAA54276B1A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACEAAC11-EA16-470A-A176-AAA54276B1A6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{ACEAAC11-EA16-470A-A176-AAA54276B1A6}.Debug|x64.Build.0 = Debug|Any CPU
+		{ACEAAC11-EA16-470A-A176-AAA54276B1A6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{ACEAAC11-EA16-470A-A176-AAA54276B1A6}.Debug|x86.Build.0 = Debug|Any CPU
+		{ACEAAC11-EA16-470A-A176-AAA54276B1A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACEAAC11-EA16-470A-A176-AAA54276B1A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACEAAC11-EA16-470A-A176-AAA54276B1A6}.Release|x64.ActiveCfg = Release|Any CPU
+		{ACEAAC11-EA16-470A-A176-AAA54276B1A6}.Release|x64.Build.0 = Release|Any CPU
+		{ACEAAC11-EA16-470A-A176-AAA54276B1A6}.Release|x86.ActiveCfg = Release|Any CPU
+		{ACEAAC11-EA16-470A-A176-AAA54276B1A6}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,5 +111,6 @@ Global
 		{9E43D524-01D6-4791-A2EF-C0AC0324C4C2} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{61542715-01C4-4A15-8805-7B4AB7AC503B} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{EE3FA758-A871-4637-B507-36371AF9E596} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
+		{ACEAAC11-EA16-470A-A176-AAA54276B1A6} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 EndGlobal

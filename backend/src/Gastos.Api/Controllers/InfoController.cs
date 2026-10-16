@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Gastos.Api.Controllers;
 
 [ApiController]
+[AllowAnonymous]
 [Route("api/v1/info")]
 public sealed class InfoController(IHostEnvironment env) : ControllerBase
 {

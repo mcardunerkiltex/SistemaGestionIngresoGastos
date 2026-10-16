@@ -1,4 +1,5 @@
 using FluentValidation;
+using Gastos.Application.Auth;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Gastos.Application;
@@ -9,6 +10,7 @@ public static class DependencyInjection
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly, includeInternalTypes: true);
+        services.AddScoped<AuthService>();
         return services;
     }
 }

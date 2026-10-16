@@ -68,7 +68,27 @@ npm install
 npm start                                  # http://localhost:4200
 ```
 
+### Login con Google (opcional)
+
+Sin configurar, la app funciona solo con email y contraseña y el botón de Google no aparece.
+
+1. En [Google Cloud Console](https://console.cloud.google.com/apis/credentials) creá un **ID de cliente OAuth** de tipo *Aplicación web*.
+2. En **Orígenes autorizados de JavaScript** agregá `http://localhost:4200`, `http://localhost:8080` y el dominio donde se publique.
+3. Pasá el Client ID a la API:
+   - Desarrollo: `cd backend && dotnet user-secrets --project src/Gastos.Api set Google:ClientId <client-id>`
+   - Docker: `GOOGLE_CLIENT_ID=<client-id> docker compose up --build`
+
+### Sesión y seguridad
+
+- Access token JWT de 15 minutos, guardado solo en memoria del navegador.
+- Refresh token de 30 días en una cookie `httpOnly`, `Secure` y `SameSite=Strict`; se rota en cada uso y se guarda hasheado. Si alguien reusa uno viejo, se cierran todas las sesiones del usuario.
+- Contraseñas con PBKDF2 (hasher de ASP.NET Core Identity).
+- Límite de 10 intentos por minuto por IP en los endpoints de login y registro.
+- En producción `Jwt:SigningKey` (32+ caracteres) va como variable de entorno `Jwt__SigningKey`, nunca en el repo.
+
 ### Tests
+
+Los tests de integración levantan la API completa contra PostgreSQL y crean una base descartable por corrida (usa `TEST_DATABASE_URL` o la base local de docker compose).
 
 ```bash
 cd backend && dotnet test
@@ -86,6 +106,10 @@ dotnet ef migrations add <Nombre> -p src/Gastos.Infrastructure -s src/Gastos.Api
 ## Estado
 
 - [x] Paso 1: alcance del MVP, arquitectura y modelo de datos.
-- [x] Paso 2: esqueleto del proyecto (este commit).
-- [ ] Paso 3: MVP: login (email y Google), cuentas, categorías, movimientos, presupuesto y dashboard.
+- [x] Paso 2: esqueleto del proyecto.
+- [ ] Paso 3: MVP
+  - [x] Login con email y Google, sesión con refresh token
+  - [ ] Cuentas y categorías
+  - [ ] Movimientos y carga rápida
+  - [ ] Presupuesto y dashboard
 - [ ] Paso 4: publicación.
