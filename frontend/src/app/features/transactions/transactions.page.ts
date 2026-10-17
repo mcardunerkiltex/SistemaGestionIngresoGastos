@@ -9,7 +9,9 @@ import { RouterLink } from '@angular/router';
 import { AccountsApi } from '../../core/api/accounts.api';
 import { CategoriesApi } from '../../core/api/categories.api';
 import { Transaction, TransactionsApi } from '../../core/api/transactions.api';
-import { addMonths, fromIsoDate, monthRange } from '../../shared/dates';
+import { fromIsoDate, monthRange } from '../../shared/dates';
+import { MonthNav } from '../../shared/month-nav';
+import { SelectedMonth } from '../../shared/selected-month';
 
 const PAGE_SIZE = 50;
 
@@ -20,14 +22,14 @@ interface DayGroup {
 
 @Component({
   selector: 'app-transactions',
-  imports: [CurrencyPipe, DatePipe, RouterLink, MatButtonModule, MatIconModule, MatFormFieldModule, MatSelectModule, MatInputModule],
+  imports: [CurrencyPipe, DatePipe, RouterLink, MonthNav, MatButtonModule, MatIconModule, MatFormFieldModule, MatSelectModule, MatInputModule],
   templateUrl: './transactions.page.html',
   styleUrl: './transactions.page.scss',
 })
 export class TransactionsPage {
   private readonly api = inject(TransactionsApi);
 
-  protected readonly month = signal(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
+  protected readonly month = inject(SelectedMonth).month;
   protected readonly accountId = signal<string>('');
   protected readonly categoryId = signal<string>('');
   protected readonly search = signal('');
@@ -71,10 +73,6 @@ export class TransactionsPage {
   });
 
   protected readonly toDate = fromIsoDate;
-
-  protected moveMonth(delta: number): void {
-    this.month.set(addMonths(this.month(), delta));
-  }
 
   protected signedAmount(t: Transaction): number {
     if (t.kind === 'Expense') return -t.amount;

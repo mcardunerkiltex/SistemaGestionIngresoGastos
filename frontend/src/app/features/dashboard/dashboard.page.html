@@ -1,0 +1,107 @@
+<app-month-nav />
+
+@if (data.value(); as d) {
+  <section class="cards">
+    <div class="card">
+      <span class="label">Ingresos</span>
+      <span class="value income">{{ d.income | currency: 'ARS' : 'symbol' : '1.0-0' }}</span>
+    </div>
+    <div class="card">
+      <span class="label">Gastos</span>
+      <span class="value expense">{{ d.expense | currency: 'ARS' : 'symbol' : '1.0-0' }}</span>
+    </div>
+    <div class="card">
+      <span class="label">{{ saved() < 0 ? 'Gastaste de más' : 'Te queda' }}</span>
+      <span class="value" [class.expense]="saved() < 0">{{ (saved() < 0 ? -saved() : saved()) | currency: 'ARS' : 'symbol' : '1.0-0' }}</span>
+    </div>
+    <div class="card">
+      <span class="label">En tus cuentas</span>
+      <span class="value">{{ d.totalBalance | currency: 'ARS' : 'symbol' : '1.0-0' }}</span>
+    </div>
+  </section>
+
+  <section class="panel">
+    <header>
+      <h2>Presupuesto</h2>
+      <a mat-button routerLink="/presupuesto">{{ d.budgeted ? 'Ver' : 'Armar' }}</a>
+    </header>
+    @if (d.budgeted) {
+      <p class="numbers">
+        Gastaste <strong>{{ d.expense | currency: 'ARS' : 'symbol' : '1.0-0' }}</strong> de {{ d.budgeted | currency: 'ARS' : 'symbol' : '1.0-0' }}
+        ({{ d.expense / d.budgeted | percent }})
+      </p>
+      <div class="bar" [attr.data-state]="budgetState(d.expense, d.budgeted)">
+        <span [style.width.%]="usedPercent(d.expense, d.budgeted)"></span>
+      </div>
+    } @else {
+      <p class="muted">Ponele un tope a cada categoría y vas a ver acá cómo venís en el mes.</p>
+    }
+  </section>
+
+  <section class="panel">
+    <h2>En qué gastaste</h2>
+    @for (c of d.byCategory; track c.categoryId) {
+      <div class="category">
+        <span class="icon" [style.background]="c.color"><mat-icon>{{ c.icon }}</mat-icon></span>
+        <div class="body">
+          <div class="row">
+            <span>{{ c.name }}</span>
+            <span class="amount" [class.expense]="c.budgeted && c.spent > c.budgeted">
+              {{ c.spent | currency: 'ARS' : 'symbol' : '1.0-0' }}
+              @if (c.budgeted) {
+                <span class="muted">/ {{ c.budgeted | currency: 'ARS' : 'symbol' : '1.0-0' }}</span>
+              }
+            </span>
+          </div>
+          <div class="track">
+            @if (c.budgeted) {
+              <span class="limit" [style.left.%]="categoryWidth(c.budgeted)"></span>
+            }
+            <span class="fill" [attr.data-state]="budgetState(c.spent, c.budgeted)" [style.width.%]="categoryWidth(c.spent)" [style.background]="c.budgeted ? null : c.color"></span>
+          </div>
+        </div>
+      </div>
+    } @empty {
+      <p class="muted">Todavía no hay gastos este mes.</p>
+    }
+  </section>
+
+  <section class="panel">
+    <h2>Últimos 6 meses</h2>
+    <div class="history" role="img" aria-label="Ingresos y gastos de los últimos 6 meses">
+      @for (m of d.lastMonths; track m.month) {
+        <div class="month">
+          <div class="bars">
+            <span class="income-bar" [style.height.%]="historyHeight(m.income)" [title]="'Ingresos: ' + (m.income | currency)"></span>
+            <span class="expense-bar" [style.height.%]="historyHeight(m.expense)" [title]="'Gastos: ' + (m.expense | currency)"></span>
+          </div>
+          <span class="month-label">{{ toDate(m.month) | date: 'MMM' }}</span>
+        </div>
+      }
+    </div>
+    <div class="legend"><span class="dot income-bar"></span>Ingresos <span class="dot expense-bar"></span>Gastos</div>
+  </section>
+
+  <section class="panel">
+    <header>
+      <h2>Últimos movimientos</h2>
+      <a mat-button routerLink="/movimientos">Ver todos</a>
+    </header>
+    @for (t of recent.value()?.items; track t.id) {
+      <a class="movement" [routerLink]="['/movimientos', t.id]">
+        <span class="name">{{ t.kind === 'Transfer' ? t.account.name + ' → ' + t.toAccount?.name : t.category?.name }}</span>
+        <span class="muted">{{ toDate(t.date) | date: 'd/M' }}</span>
+        <span class="amount" [class.expense]="t.kind === 'Expense'" [class.income]="t.kind === 'Income'">{{ signed(t) | currency }}</span>
+      </a>
+    } @empty {
+      <div class="start">
+        <p class="muted">No hay movimientos en este mes.</p>
+        <a mat-flat-button routerLink="/movimientos/nuevo">Cargar un movimiento</a>
+      </div>
+    }
+  </section>
+} @else if (data.error()) {
+  <p class="muted">No se pudo cargar el resumen.</p>
+} @else {
+  <p class="muted">Cargando…</p>
+}

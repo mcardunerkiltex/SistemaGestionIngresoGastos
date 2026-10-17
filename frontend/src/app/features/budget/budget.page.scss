@@ -1,0 +1,127 @@
+.summary {
+  margin: 12px 0 8px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--mat-sys-surface-container);
+}
+
+.figures {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 8px;
+
+  div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font: var(--mat-sys-title-small);
+  }
+
+  .label {
+    font: var(--mat-sys-label-medium);
+    color: var(--mat-sys-on-surface-variant);
+  }
+}
+
+h2 {
+  margin: 20px 0 4px;
+  font: var(--mat-sys-label-large);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.bar {
+  display: block;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--mat-sys-surface-container-highest);
+
+  span {
+    display: block;
+    height: 100%;
+    border-radius: 4px;
+    background: var(--mat-sys-primary);
+  }
+
+  &[data-state='warn'] span {
+    background: #f9a825;
+  }
+
+  &[data-state='over'] span {
+    background: var(--mat-sys-error);
+  }
+}
+
+.line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 4px;
+  border: none;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  background: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--mat-sys-surface-container-low);
+  }
+}
+
+.icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--mat-sys-outline);
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.name {
+  font: var(--mat-sys-body-large);
+}
+
+.numbers,
+.hint {
+  font: var(--mat-sys-body-small);
+  color: var(--mat-sys-on-surface-variant);
+  white-space: nowrap;
+}
+
+.over {
+  color: var(--mat-sys-error);
+}
+
+.add {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--mat-sys-on-surface-variant);
+}

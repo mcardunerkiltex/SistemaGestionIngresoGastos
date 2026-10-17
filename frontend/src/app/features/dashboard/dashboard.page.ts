@@ -1,36 +1,62 @@
-import { Component, inject } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
+import { CurrencyPipe, DatePipe, PercentPipe } from '@angular/common';
+import { Component, computed, inject, resource } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { ApiInfoService } from '../../core/api/api-info.service';
+import { RouterLink } from '@angular/router';
+import { BudgetsApi } from '../../core/api/budgets.api';
+import { Transaction, TransactionsApi } from '../../core/api/transactions.api';
+import { fromIsoDate, monthRange } from '../../shared/dates';
+import { MonthNav } from '../../shared/month-nav';
+import { budgetState, usedPercent } from '../../shared/progress';
+import { SelectedMonth } from '../../shared/selected-month';
 
+/** Inicio: cómo viene el mes (ingresos, gastos, presupuesto, en qué se fue la plata). */
 @Component({
   selector: 'app-dashboard',
-  imports: [MatCardModule, MatIconModule],
-  template: `
-    <h1>Inicio</h1>
-    <p>Acá va el resumen del mes: ingresos vs gastos, gasto por categoría y avance del presupuesto.</p>
-
-    <mat-card appearance="outlined">
-      <mat-card-content class="status">
-        @let status = api.info();
-        @if (!status) {
-          <span>Conectando con la API…</span>
-        } @else if (status.ok) {
-          <mat-icon class="ok">check_circle</mat-icon>
-          <span>Conectado a la API ({{ status.info.environment }})</span>
-        } @else {
-          <mat-icon class="error">error</mat-icon>
-          <span>No se pudo conectar con la API</span>
-        }
-      </mat-card-content>
-    </mat-card>
-  `,
-  styles: `
-    .status { display: flex; align-items: center; gap: 8px; }
-    .ok { color: var(--mat-sys-primary); }
-    .error { color: var(--mat-sys-error); }
-  `,
+  imports: [CurrencyPipe, DatePipe, PercentPipe, RouterLink, MatButtonModule, MatIconModule, MonthNav],
+  templateUrl: './dashboard.page.html',
+  styleUrl: './dashboard.page.scss',
 })
 export class DashboardPage {
-  protected readonly api = inject(ApiInfoService);
+  private readonly budgets = inject(BudgetsApi);
+  private readonly transactions = inject(TransactionsApi);
+  private readonly selected = inject(SelectedMonth);
+
+  protected readonly data = resource({
+    params: () => ({ month: this.selected.iso() }),
+    loader: ({ params }) => this.budgets.dashboard(params.month),
+  });
+  protected readonly recent = resource({
+    params: () => monthRange(this.selected.month()),
+    loader: ({ params }) => this.transactions.list({ ...params, pageSize: 5 }),
+  });
+
+  protected readonly saved = computed(() => {
+    const d = this.data.value();
+    return d ? d.income - d.expense : 0;
+  });
+  /** Escala de las barras de los últimos meses: el valor más alto. */
+  private readonly historyMax = computed(() =>
+    Math.max(1, ...(this.data.value()?.lastMonths ?? []).flatMap((m) => [m.income, m.expense])),
+  );
+  /** Escala de las barras por categoría: el mayor entre gastado y presupuestado. */
+  private readonly categoryMax = computed(() =>
+    Math.max(1, ...(this.data.value()?.byCategory ?? []).map((c) => Math.max(c.spent, c.budgeted))),
+  );
+
+  protected readonly usedPercent = usedPercent;
+  protected readonly budgetState = budgetState;
+  protected readonly toDate = fromIsoDate;
+
+  protected historyHeight(value: number): number {
+    return Math.round((value / this.historyMax()) * 100);
+  }
+
+  protected categoryWidth(value: number): number {
+    return Math.round((value / this.categoryMax()) * 100);
+  }
+
+  protected signed(t: Transaction): number {
+    return t.kind === 'Expense' ? -t.amount : t.amount;
+  }
 }
