@@ -103,6 +103,12 @@ dotnet tool restore
 dotnet ef migrations add <Nombre> -p src/Gastos.Infrastructure -s src/Gastos.Api -o Persistence/Migrations
 ```
 
+## Publicación
+
+Producción usa el `Dockerfile` de la raíz: una sola imagen donde la API sirve también la web. La conexión a la
+base se toma de `DATABASE_URL` (formato `postgres://…`) si existe, y las migraciones se aplican al arrancar.
+Guía paso a paso para Railway: [docs/publicacion-railway.md](docs/publicacion-railway.md).
+
 ## Estado
 
 - [x] Paso 1: alcance del MVP, arquitectura y modelo de datos.

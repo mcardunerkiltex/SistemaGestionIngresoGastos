@@ -54,3 +54,10 @@ jobs:
       - run: npm ci
       - run: npx ng build
       - run: npx ng test --watch=false
+
+  image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build production image
+        run: docker build -t gastos .
