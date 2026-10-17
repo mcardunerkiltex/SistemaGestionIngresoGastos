@@ -107,7 +107,11 @@ dotnet ef migrations add <Nombre> -p src/Gastos.Infrastructure -s src/Gastos.Api
 
 Producción usa el `Dockerfile` de la raíz: una sola imagen donde la API sirve también la web. La conexión a la
 base se toma de `DATABASE_URL` (formato `postgres://…`) si existe, y las migraciones se aplican al arrancar.
-Guía paso a paso para Railway: [docs/publicacion-railway.md](docs/publicacion-railway.md).
+Dos opciones, con su guía paso a paso:
+
+- **Railway** (lo más simple): [docs/publicacion-railway.md](docs/publicacion-railway.md).
+- **Servidor propio** con deploy automático desde GitHub Actions por SSH, Docker Compose y HTTPS con Caddy:
+  [docs/publicacion-servidor-propio.md](docs/publicacion-servidor-propio.md).
 
 ## Estado
 
