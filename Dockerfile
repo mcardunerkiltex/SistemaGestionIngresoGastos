@@ -5,7 +5,11 @@ FROM node:24-alpine AS web
 WORKDIR /src
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci
-COPY frontend/ .
+# Solo lo que necesita el build: si el contexto trae un node_modules de otra máquina (macOS, Windows),
+# no pisa el que instaló npm ci para Linux. No depende de que el .dockerignore haya llegado al servidor.
+COPY frontend/angular.json frontend/ngsw-config.json frontend/tsconfig.json frontend/tsconfig.app.json ./
+COPY frontend/public/ public/
+COPY frontend/src/ src/
 RUN npx ng build --configuration production
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS api
@@ -17,7 +21,10 @@ COPY backend/src/Gastos.Infrastructure/*.csproj src/Gastos.Infrastructure/
 COPY backend/src/Gastos.Api/*.csproj src/Gastos.Api/
 RUN dotnet restore src/Gastos.Api/Gastos.Api.csproj
 COPY backend/src/ src/
-RUN dotnet publish src/Gastos.Api/Gastos.Api.csproj -c Release -o /app --no-restore
+# Si llegaron carpetas obj/ o bin/ de otra máquina (apuntan a su caché de NuGet, p. ej. /Users/...),
+# se descartan y el publish vuelve a restaurar. Es rápido: los paquetes ya quedaron en la capa del restore.
+RUN find src -type d \( -name obj -o -name bin \) -prune -exec rm -rf {} + \
+    && dotnet publish src/Gastos.Api/Gastos.Api.csproj -c Release -o /app
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /app
